@@ -1,0 +1,84 @@
+# Copyright (C) 2018-2021 Intel Corporation
+#
+# SPDX-License-Identifier: MIT
+
+version: '3.3'
+
+services:
+  cvat2_db:
+    container_name: cvat2_db
+    image: postgres:10-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_DB: cvat
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - /app/data/cvat2/cvat_cvat_db:/var/lib/postgresql/data
+    networks:
+      - cvat2
+
+  cvat2_redis:
+    container_name: cvat2_redis
+    image: redis:4.0-alpine
+    restart: always
+    networks:
+      - cvat2
+
+  cvat2:
+    container_name: cvat2
+    image: openvino/cvat_server
+    restart: always
+    depends_on:
+      - cvat2_redis
+      - cvat2_db
+      - cvat2_opa
+    environment:
+      DJANGO_MODWSGI_EXTRA_ARGS: ''
+      ALLOWED_HOSTS: '*'
+      CVAT_REDIS_HOST: 'cvat2_redis'
+      CVAT_POSTGRES_HOST: 'cvat2_db'
+      ADAPTIVE_AUTO_ANNOTATION: 'false'
+      no_proxy: elasticsearch2,kibana2,logstash2,nuclio2,opa,${no_proxy}
+    labels:
+        - traefik.enable=true
+        - traefik.http.services.cvat2.loadbalancer.server.port=8080
+        - traefik.http.routers.cvat2.rule=Host(`cvat2-data.standalone.powerarena.com`) && PathPrefix(`/api/`, `/git/`, `/opencv/`, `/static/`, `/admin`, `/documentation/`, `/django-rq`)
+        - traefik.http.routers.cvat2.entrypoints=web
+    volumes:
+      - /app/data/cvat2/cvat_cvat_data:/home/django/data
+      - /app/data/cvat2/cvat_cvat_keys:/home/django/keys
+      - /app/data/cvat2/cvat_cvat_logs:/home/django/logs
+    networks:
+      - cvat2
+
+  cvat2_ui:
+    container_name: cvat2_ui
+    image: openvino/cvat_ui
+    restart: always
+    depends_on:
+      - cvat2
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.cvat2-ui.loadbalancer.server.port=80
+      - traefik.http.routers.cvat2-ui.rule=Host(`cvat2-data.standalone.powerarena.com`)
+      - traefik.http.routers.cvat2-ui.entrypoints=web
+    networks:
+      - cvat2
+
+  cvat2_opa:
+    container_name: cvat2_opa
+    image: openpolicyagent/opa:0.34.2-rootless
+    restart: always
+    networks:
+      cvat2:
+        aliases:
+          - opa
+    volumes:
+      - ./cvat2/apps/iam/rules:/rules
+    ports:
+      - '8182:8181'
+    command: run --server --addr :8181 --set=decision_logs.console=true /rules
+
+networks:
+  cvat2:

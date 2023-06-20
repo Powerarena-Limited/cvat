@@ -1,0 +1,30 @@
+http:
+  routers:
+    kibana2:
+      entryPoints:
+      - web
+      middlewares:
+      - analytics-auth2
+      - strip-prefix2
+      service: kibana2
+      rule: Host(`cvat2-data.standalone.powerarena.com`) && PathPrefix(`/analytics`)
+
+  middlewares:
+    analytics-auth2:
+      forwardauth:
+        address: http://cvat2:8080/analytics
+        authRequestHeaders:
+          - "Cookie"
+          - "Authorization"
+
+    strip-prefix2:
+      stripprefix:
+        prefixes:
+        - /analytics
+
+  services:
+    kibana2:
+      loadBalancer:
+        servers:
+        - url: http://kibana2:5601
+        passHostHeader: false
