@@ -9,13 +9,8 @@ function install_nuctl() {
 }
 
 function gpu_support () {
-	nuctl deploy --project-name default \
-		--path serverless/tensorflow/matterport/mask_rcnn/nuclio \
-		--platform local --base-image tensorflow/tensorflow:1.15.5-gpu-py3 \
-		--desc "GPU based implementation of Mask RCNN on Python 3, Keras, and TensorFlow." \
-		--image cvat/tf.matterport.mask_rcnn_gpu \
-		--triggers '{"myHttpTrigger": {"maxWorkers": 1}}' \
-		--resource-limit nvidia.com/gpu=1
+	cd serverless
+	./deploy_gpu.sh pytorch/facebookresearch/sam/nuclio
 }
 
 function deploy_cvat_with_serverless() {
