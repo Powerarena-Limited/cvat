@@ -35,12 +35,13 @@ function install_nvidia_toolkit() {
 	fi
 }
 
-install_nvidia_toolkit
+# install_nvidia_toolkit
+docker compose -f docker-compose.yml -f components/serverless/docker-compose.serverless.yml down
 deploy_cvat_with_serverless
 
 # TODO Check cvat up
 sleep 10
 docker exec -i cvat_server bash -ic "DJANGO_SUPERUSER_PASSWORD=1 python3 ~/manage.py createsuperuser --username admin --email admin@cvat.com --no-input"
 
-install_nuctl
+# install_nuctl
 gpu_support

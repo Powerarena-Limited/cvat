@@ -25,7 +25,7 @@ services:
 
   cvat_server:
     container_name: cvat_server
-    image: cvat/server:${CVAT_VERSION:-v2.4.8}
+    image: cvat/server:${CVAT_VERSION:-v2.4.8-dev}
     restart: always
     depends_on:
       - cvat_redis
@@ -45,6 +45,8 @@ services:
       CLICKHOUSE_HOST: clickhouse
       CVAT_ANALYTICS: 1
       CVAT_BASE_URL:
+      CVAT_NUCLIO_HOST: 192.168.0.173
+      # CVAT_NUCLIO_INVOKE_METHOD: direct
     entrypoint: /home/django/backend_entrypoint.sh
     labels:
       - traefik.enable=true
@@ -56,6 +58,7 @@ services:
       - cvat_data:/home/django/data
       - cvat_keys:/home/django/keys
       - cvat_logs:/home/django/logs
+      - /app/cvat://home/django
     networks:
       cvat:
         aliases:
