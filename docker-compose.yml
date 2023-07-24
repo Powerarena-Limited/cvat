@@ -25,7 +25,7 @@ services:
 
   cvat_server:
     container_name: cvat_server
-    image: cvat/server:${CVAT_VERSION:-v2.4.8-dev}
+    image: cvat/server:${CVAT_VERSION:-v2.4.8}
     restart: always
     depends_on:
       - cvat_redis
@@ -58,7 +58,6 @@ services:
       - cvat_data:/home/django/data
       - cvat_keys:/home/django/keys
       - cvat_logs:/home/django/logs
-      - /app/cvat://home/django
     networks:
       cvat:
         aliases:
@@ -353,10 +352,35 @@ services:
 
 volumes:
   cvat_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /app/cvat-data/cvat_db
   cvat_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /app/cvat-data/cvat_data
   cvat_keys:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /app/cvat-data/cvat_keys
   cvat_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /app/cvat-data/cvat_logs
   cvat_events_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /app/cvat-data/cvat_events_db
 
 networks:
   cvat:
