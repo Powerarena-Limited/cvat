@@ -58,7 +58,7 @@ services:
       - cvat_data:/home/django/data
       - cvat_keys:/home/django/keys
       - cvat_logs:/home/django/logs
-      - /home/support/github/cvat:/home/django
+      # - /home/support/github/cvat:/home/django
     ulimits:
       nofile:
         soft: 4096
