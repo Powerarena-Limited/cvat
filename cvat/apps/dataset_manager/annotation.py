@@ -909,7 +909,11 @@ class TrackManager(ObjectManager):
                 break # The track finishes here
 
             if prev_shape:
-                assert curr_frame > prev_shape["frame"], f"{curr_frame=}, {prev_shape["frame"]}, type={type(curr_frame)}" # Catch invalid tracks
+                if curr_frame <= prev_shape['frame']:
+                    del track["shapes"][track["shapes"].index(shape)]
+                    shape = prev_shape
+
+                # assert curr_frame > prev_shape["frame"], f"{curr_frame=},{prev_shape['frame']=},{shape=}, {prev_shape=}, {track=}" # Catch invalid tracks
 
                 # Propagate attributes
                 for attr in prev_shape["attributes"]:
