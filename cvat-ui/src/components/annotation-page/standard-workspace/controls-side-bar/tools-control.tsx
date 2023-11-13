@@ -850,6 +850,20 @@ export class ToolsControlComponent extends React.PureComponent<Props, State> {
         const {
             frame, labels, curZOrder, jobInstance, activeLabelID, createAnnotations,
         } = this.props;
+        if (this.interaction.latestResponse.bounds) {
+            const object = new core.classes.ObjectState({
+                frame,
+                objectType: ObjectType.SHAPE,
+                source: core.enums.Source.SEMI_AUTO,
+                label: labels.length ? labels.filter((label: any) => label.id === activeLabelID)[0] : null,
+                shapeType: ShapeType.RECTANGLE,
+                points: this.interaction.latestResponse.bounds,
+                occluded: false,
+                zOrder: curZOrder,
+            });
+
+            createAnnotations(jobInstance, frame, [object]);
+        }
 
         if (convertMasksToPolygons) {
             const object = new core.classes.ObjectState({
