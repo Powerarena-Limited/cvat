@@ -1,7 +1,7 @@
 # Copyright (C) 2018-2022 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
-
+version: '3.6'
 services:
   cvat_db:
     container_name: cvat_db
@@ -45,7 +45,7 @@ services:
       CLICKHOUSE_HOST: clickhouse
       CVAT_ANALYTICS: 1
       CVAT_BASE_URL:
-      CVAT_NUCLIO_HOST: 192.168.0.173
+      # CVAT_NUCLIO_HOST: 192.168.0.173
       # CVAT_NUCLIO_INVOKE_METHOD: direct
     entrypoint: /home/django/backend_entrypoint.sh
     labels:
@@ -233,7 +233,7 @@ services:
     #   - traefik.http.routers.dashboard.service=api@internal
     #   - traefik.http.routers.dashboard.rule=Host(`${CVAT_HOST:-localhost}`)
     ports:
-      - 8080:8080
+      - 28080:8080
       - 8090:8090
     environment:
       CVAT_HOST: ${CVAT_HOST:-localhost}
@@ -356,31 +356,31 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /app/cvat-data/cvat_db
+      device: ${CVAT_DB_DIR:-/app/cvat-data/cvat_db}
   cvat_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /app/cvat-data/cvat_data
+      device: ${CVAT_DATA_DIR:-/app/cvat-data/cvat_data}
   cvat_keys:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /app/cvat-data/cvat_keys
+      device: ${CVAT_KEYS_DIR:-/app/cvat-data/cvat_keys}
   cvat_logs:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /app/cvat-data/cvat_logs
+      device: ${CVAT_LOGS_DIR:-/app/cvat-data/cvat_logs}
   cvat_events_db:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /app/cvat-data/cvat_events_db
+      device: ${CVAT_EVENTS_DB_DIR:-/app/cvat-data/cvat_events_db}
 
 networks:
   cvat:
