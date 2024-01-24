@@ -61,20 +61,20 @@ function install_nvidia_toolkit() {
 }
 
 # install_nvidia_toolkit
-docker compose -f docker-compose.yml -f components/serverless/docker-compose.serverless.yml down
+# docker compose -f docker-compose.yml -f components/serverless/docker-compose.serverless.yml restart
 deploy_cvat_with_serverless
 
-# Check cvat up
-sleep 120
-docker exec -i cvat_server bash -ic "DJANGO_SUPERUSER_PASSWORD=1 python3 ~/manage.py createsuperuser --username admin --email admin@cvat.com --no-input"
+# # Check cvat up
+# sleep 120
+# docker exec -i cvat_server bash -ic "DJANGO_SUPERUSER_PASSWORD=1 python3 ~/manage.py createsuperuser --username admin --email admin@cvat.com --no-input"
 
-# if nuctl not installed then install it
-if ! command -v nuctl &> /dev/null
-then
-    export http_proxy=http://192.168.0.111:9118
-    export https_proxy=$http_proxy
-    install_nuctl
-    gpu_support
-else
-    echo "nuctl already installed"
-fi
+# # if nuctl not installed then install it
+# if ! command -v nuctl &> /dev/null
+# then
+#     export http_proxy=http://192.168.0.111:9118
+#     export https_proxy=$http_proxy
+#     install_nuctl
+#     gpu_support
+# else
+#     echo "nuctl already installed"
+# fi

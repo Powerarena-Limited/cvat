@@ -10,8 +10,8 @@ services:
       - /tmp:/tmp
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      http_proxy:
-      https_proxy:
+      http_proxy: 192.168.0.111:9118
+      https_proxy: 192.168.0.111:9118
       no_proxy: 172.28.0.1,${no_proxy:-}
       NUCLIO_CHECK_FUNCTION_CONTAINERS_HEALTHINESS: 'true'
       NUCLIO_DASHBOARD_DEFAULT_FUNCTION_MOUNT_MODE: 'volume'

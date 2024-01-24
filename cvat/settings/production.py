@@ -15,3 +15,5 @@ for key in RQ_QUEUES:
 # https://github.com/moggers87/django-sendfile2
 SENDFILE_BACKEND = 'django_sendfile.backends.nginx'
 SENDFILE_URL = '/'
+
+CSRF_TRUSTED_ORIGINS = ["https://cvat-quick.standalone.powerarena.com:20443"]
